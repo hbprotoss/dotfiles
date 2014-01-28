@@ -1,3 +1,30 @@
+
+# Setting PATH for Python
+# The orginal version is saved in .bash_profile.pysave
+PATH="/Library/Frameworks/Python.framework/Versions/2.7/bin:/Library/Frameworks/Python.framework/Versions/3.3/bin:${PATH}"
+export PATH
+
+
+################################################################################
+#enables colorin the terminal bash shell export
+
+CLICOLOR=1
+
+#sets up thecolor scheme for list export
+
+LSCOLORS=gxfxcxdxbxegedabagacad
+
+#sets up theprompt color (currently a green similar to linux terminal)
+
+exportPS1='\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;36m\]\w\[\033[00m\]\$ '
+
+#enables colorfor iTerm
+
+export TERM=xterm-color
+
+################################################################################
+# My definition
+
 # ~/.bashrc: executed by bash(1) for non-login shells.
 # see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
 # for examples
@@ -69,17 +96,20 @@ xterm*|rxvt*)
     ;;
 esac
 
-# enable color support of ls and also add handy aliases
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
-
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
+if brew list | grep coreutils > /dev/null ; then
+	PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
+	alias ls='ls -F --show-control-chars --color=auto'
+	eval `gdircolors -b $HOME/.dir_colors`
 fi
+
+# enable color support of ls and also add handy aliases
+alias ls='ls --color=auto'
+alias dir='dir --color=auto'
+alias vdir='vdir --color=auto'
+
+alias grep='grep --color=auto'
+alias fgrep='fgrep --color=auto'
+alias egrep='egrep --color=auto'
 
 # some more ls aliases
 alias ll='ls -alF'
@@ -89,8 +119,7 @@ alias pwget='wget -e "http-proxy=127.0.0.1:10001" -U "Mozilla/5.0 (X11; Linux x8
 alias wget='wget -c -U "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.11 (KHTML, like Gecko) Chrome/23.0.1271.97 Safari/537.11"'
 alias unzip='unzip -O CP936'
 alias zipinfo='zipinfo -O CP936'
-alias o='nautilus'
-alias d='dolphin'
+alias o='open'
 alias gitq='qgit'
 alias nk='nikola'
 alias papt-get='apt-get -o Acquire::http::proxy="http://127.0.0.1:10001"'
@@ -105,27 +134,31 @@ alias alert='notify-send --urgency=low -i "$([ $? = 0 ] && echo terminal || echo
 # See /usr/share/doc/bash-doc/examples in the bash-doc package.
 
 if [ -f ~/.bash_aliases ]; then
-    . ~/.bash_aliases
+	. ~/.bash_aliases
 fi
 
 # enable programmable completion features (you don't need to enable
 # this, if it's already enabled in /etc/bash.bashrc and /etc/profile
 # sources /etc/bash.bashrc).
-if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
-    . /etc/bash_completion
+if [ -f $(brew --prefix)/etc/bash_completion ]; then
+	. $(brew --prefix)/etc/bash_completion
 fi
 
-#export PATH+=:/home/digimon/.jre/bin
-export JAVA_HOME=/home/hbprotoss/Software/java/jdk1.7.0_21
-export PATH+=:$JAVA_HOME/bin
-export CLASSPATH=.:$JAVA_HOME/lib/tools.jar
+export MANPATH="$(brew --prefix coreutils)/libexec/gnuman:/usr/share/man:/usr/local/share/man:/usr/X11/share/man"
+export JAVA_HOME=/Library/Java/JavaVirtualMachines/jdk1.7.0_45.jdk/Contents/Home
+export CATALINA_HOME=/Users/hbprotoss/Software/dev/apache-tomcat-7.0.47
+export Eclipse_HOME=/Users/hbprotoss/Software/dev/eclipse
+export WORKSPACE=/Users/hbprotoss/Documents/dev/workspace
 
-export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/usr/local/lib/pkgconfig
-export SCAN=/home/digimon/Desktop/Projects/scan
+export PATH+=":/Users/hbprotoss/Software/dev/apache-maven-3.1.1/bin"
 
-export WORKON_HOME=$HOME/Projects/.virtualenv
-source /etc/bash_completion.d/virtualenvwrapper
-export PIP_VIRTUALENV_BASE=$WORKON_HOME
+# qunar ssh
+export CN6=protoss.hu@l-rtools1.ops.cn6.qunar.com
 
-# (cd ~/wallproxy/local && bash startup > /dev/null&)
-export LC_ALL=en_US.UTF-8
+# homebrew
+export PATH="$(brew --prefix ctags)/bin:$PATH"
+
+# virtualenvwrapper
+. $(which virtualenvwrapper.sh)
+
+
